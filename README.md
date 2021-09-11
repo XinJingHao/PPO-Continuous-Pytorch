@@ -25,6 +25,6 @@ The --EnvIdex can be set to be 0~5, where
 '--EnvIdex 4' for 'Humanoid-v2'  
 '--EnvIdex 5' for 'HalfCheetah-v2'  
 ### Visualize the training curve
-You can use the tensorboard to visualize the training curve. History training curve is saved at '\PPO Pytorch\runs'
+You can use the tensorboard to visualize the training curve. History training curve is saved at '\runs'
 ### Hyperparameter Setting
 For more details of Hyperparameter Setting, please check 'main.py'
