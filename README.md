@@ -3,6 +3,7 @@ I found the current implementation of PPO on continuous action space is whether 
 And this is a **clean and robust Pytorch implementation of PPO on continuous action space**. Here is the result:  
   
 ![avatar](https://github.com/XinJingHao/PPO-Continuous-Pytorch/blob/main/result.jpg)
+All the experiments are trained with same hyperparameters.
 
 ## Dependencies
 gym==0.18.3  
