@@ -7,12 +7,23 @@ import os, shutil
 from datetime import datetime
 import argparse
 
+def str2bool(v):
+    '''transfer str to bool for argparse'''
+    if isinstance(v, bool):
+        return v
+    if v.lower() in ('yes', 'True','true','TRUE', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'False','false','FALSE', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
+
 '''Hyperparameter Setting'''
 parser = argparse.ArgumentParser()
 parser.add_argument('--EnvIdex', type=int, default=3, help='BWv3, BWHv3, Lch_Cv2, PV0, Humanv2, HCv2')
-parser.add_argument('--write', type=bool, default=True, help='Use SummaryWriter to record the training')
-parser.add_argument('--render', type=bool, default=False, help='Render or Not')
-parser.add_argument('--Loadmodel', type=bool, default=False, help='Load pretrained model or Not')
+parser.add_argument('--write', type=str2bool, default=True, help='Use SummaryWriter to record the training')
+parser.add_argument('--render', type=str2bool, default=False, help='Render or Not')
+parser.add_argument('--Loadmodel', type=str2bool, default=False, help='Load pretrained model or Not')
 parser.add_argument('--ModelIdex', type=int, default=400, help='which model to load')
 
 parser.add_argument('--seed', type=int, default=0, help='random seed')
