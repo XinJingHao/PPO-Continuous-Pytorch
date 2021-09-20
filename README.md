@@ -12,10 +12,10 @@ numpy==1.21.2
 pytorch==1.8.1  
 
 ## How to use my code
-### Play with trained model
-run **'python main.py --write False --render True --Loadmodel True --ModelIdex 400'**  
 ### Train from scratch
 run **'python main.py'**, where the default enviroment is Pendulum-v0.  
+### Play with trained model
+run **'python main.py --write False --render True --Loadmodel True --ModelIdex 400'**  
 ### Change Enviroment
 If you want to train on different enviroments, just run **'python main.py --EnvIdex 0'**.  
 The --EnvIdex can be set to be 0~5, where   
