@@ -62,15 +62,6 @@ def Reward_adapter(r, EnvIdex):
         r = (r + 8) / 8
     return r
 
-def Done_adapter(r,done,current_steps, EnvIdex):
-    # For BipedalWalker
-    if EnvIdex == 0 or EnvIdex == 1:
-        if r <= -100: Done = True
-        else: Done = False
-    else:
-        Done = done
-    return Done
-
 def evaluate_policy(env, model, render, steps_per_epoch, max_action, EnvIdex):
     scores = 0
     turns = 3
@@ -177,9 +168,8 @@ def main():
 
             act = Action_adapter(a,max_action) #[0,1] to [-max,max]
             s_prime, r, done, info = env.step(act)
-            dead = Done_adapter(r, done, steps, EnvIdex)
             r = Reward_adapter(r, EnvIdex)
-            model.put_data((s, a, r, s_prime, logprob_a, dead))
+            model.put_data((s, a, r, s_prime, logprob_a, done))
             s = s_prime
             ep_r += r
 
