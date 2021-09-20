@@ -150,6 +150,7 @@ def main():
     if opt.Loadmodel: model.load(opt.ModelIdex)
 
     steps = 0
+    total_steps = 0
     for episode in range(Max_episode):
         s, done = env.reset(), False
         ep_r = 0
@@ -157,6 +158,7 @@ def main():
         '''Interact & trian'''
         while not done:
             steps+=1
+            total_steps += 1
 
             if render:
                 env.render()
@@ -189,6 +191,7 @@ def main():
             score = evaluate_policy(eval_env, model, False, max_steps, max_action, EnvIdex)
             if write:
                 writer.add_scalar('ep_r', score, global_step=episode)
+                writer.add_scalar('ep_r_insteps', score, global_step=total_steps)
             print('EnvName:',EnvName[EnvIdex],'seed:',random_seed,'episode:', episode,'score:', score)
 
     env.close()
