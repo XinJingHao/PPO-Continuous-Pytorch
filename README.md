@@ -29,3 +29,7 @@ The --EnvIdex can be set to be 0~5, where
 You can use the tensorboard to visualize the training curve. History training curve is saved at '\runs'
 ### Hyperparameter Setting
 For more details of Hyperparameter Setting, please check 'main.py'
+### References
+[Proximal Policy Optimization Algorithms](https://arxiv.org/pdf/1707.06347.pdf)
+[Emergence of Locomotion Behaviours in Rich Environments](https://arxiv.org/pdf/1707.02286.pdf)
+
