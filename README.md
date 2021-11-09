@@ -5,6 +5,8 @@ And this is a **clean and robust Pytorch implementation of PPO on continuous act
 ![avatar](https://github.com/XinJingHao/PPO-Continuous-Pytorch/blob/main/ppo_result.jpg)  
 All the experiments are trained with same hyperparameters.
 
+For Pytorch implementation of PPO on Discrete action space, please click [here](https://github.com/XinJingHao/PPO-Discrete-Pytorch)
+
 ## Dependencies
 gym==0.18.3  
 box2d==2.3.10  
