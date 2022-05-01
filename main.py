@@ -87,7 +87,7 @@ def main():
     write = opt.write   #Use SummaryWriter to record the training.
     render = opt.render
 
-    EnvName = ['BipedalWalker-v3','BipedalWalkerHardcore-v3','LunarLanderContinuous-v2','Pendulum-v0','Humanoid-v2','HalfCheetah-v2']
+    EnvName = ['BipedalWalker-v3','BipedalWalkerHardcore-v3','LunarLanderContinuous-v2','Pendulum-v1','Humanoid-v2','HalfCheetah-v2']
     BriefEnvName = ['BWv3', 'BWHv3', 'Lch_Cv2', 'PV0', 'Humanv2', 'HCv2']
     Env_With_Dead = [True, True, True, False, True, False]
     EnvIdex = opt.EnvIdex
