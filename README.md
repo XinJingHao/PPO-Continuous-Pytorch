@@ -2,7 +2,7 @@
 I found the current implementation of PPO on continuous action space is whether somewhat complicated or not stable, and this is a **clean and robust Pytorch implementation of PPO on continuous action space**. Here is the result:  
   
 ![avatar](https://github.com/XinJingHao/PPO-Continuous-Pytorch/blob/main/ppo_result.jpg)  
-All the experiments are trained with same hyperparameters. **Other RL algorithms by Pytorch can be found [here](https://github.com/XinJingHao/RL-Algorithms-by-Pytorch).**
+All the experiments are trained with same hyperparameters (see main.py). **Other RL algorithms by Pytorch can be found [here](https://github.com/XinJingHao/RL-Algorithms-by-Pytorch).**
 
 
 ## Dependencies
