@@ -21,7 +21,10 @@ python==3.11.5
 ```bash
 python main.py
 ```
-where the default enviroment is Pendulum-v0.  
+where the default enviroment is 'Pendulum-v0', and the algorithm runs on your GPU. If you do not have a GPU, you can use the following commmand to run on your CPU: 
+```bash
+python main.py --dvc cpu
+```
 
 ### Play with trained model
 ```bash
