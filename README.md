@@ -44,10 +44,14 @@ The --EnvIdex can be set to be 0~5, where
 '--EnvIdex 5' for 'HalfCheetah-v2' 
 ```
 
-P.S. if you want train on 'Humanoid-v2' or 'HalfCheetah-v2', you need to install **MuJoCo** first.
+P.S. 
+
+if you want train on BipedalWalker-v3, BipedalWalkerHardcore-v3, or LunarLanderContinuous-v2, you need to install **box2d-py** first.
+
+if you want train on Humanoid-v2 or HalfCheetah-v2, you need to install **MuJoCo** first.
 
 ### Visualize the training curve
-You can use the tensorboard to visualize the training curve. History training curve is saved at '\runs'
+You can use the [tensorboard](https://pytorch.org/tutorials/recipes/recipes/tensorboard_with_pytorch.html?highlight=tensorboard) to visualize the training curve. History training curve is saved at '\runs'
 
 ### Hyperparameter Setting
 For more details of Hyperparameter Setting, please check 'main.py'
