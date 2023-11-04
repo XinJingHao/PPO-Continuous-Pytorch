@@ -7,11 +7,13 @@ All the experiments are trained with same hyperparameters (see main.py). **Other
 
 ## Dependencies
 ```bash
-gym==0.18.3  
-box2d==2.3.10  
-numpy==1.21.2  
-pytorch==1.8.1  
-tensorboard==2.5.0
+gymnasium==0.29.1  (https://gymnasium.farama.org/)
+box2d-py==2.3.5  (https://pypi.org/project/box2d-py/)
+numpy==1.26.1  (https://numpy.org/)
+pytorch==2.1.0  (https://pytorch.org/)
+tensorboard==2.15.1  (https://pytorch.org/tutorials/recipes/recipes/tensorboard_with_pytorch.html?highlight=tensorboard)
+
+python==3.11.5
 ```
 
 ## How to use my code
