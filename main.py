@@ -14,9 +14,9 @@ from PPO import PPO_agent
 parser = argparse.ArgumentParser()
 parser.add_argument('--dvc', type=str, default='cuda', help='running device: cuda or cpu')
 parser.add_argument('--EnvIdex', type=int, default=3, help='BWv3, BWHv3, Lch_Cv2, PV0, Humanv2, HCv2')
-parser.add_argument('--write', type=str2bool, default=False, help='Use SummaryWriter to record the training')
-parser.add_argument('--render', type=str2bool, default=True, help='Render or Not')
-parser.add_argument('--Loadmodel', type=str2bool, default=True, help='Load pretrained model or Not')
+parser.add_argument('--write', type=str2bool, default=True, help='Use SummaryWriter to record the training')
+parser.add_argument('--render', type=str2bool, default=False, help='Render or Not')
+parser.add_argument('--Loadmodel', type=str2bool, default=False, help='Load pretrained model or Not')
 parser.add_argument('--ModelIdex', type=int, default=400, help='which model to load')
 
 parser.add_argument('--seed', type=int, default=0, help='random seed')
