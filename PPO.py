@@ -1,198 +1,83 @@
-import copy
+from utils import BetaActor, GaussianActor_musigma, GaussianActor_mu, Critic
 import numpy as np
+import copy
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
-from torch.distributions import Beta,Normal
 import math
 
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+class PPO_agent(object):
+	def __init__(self, **kwargs):
+		# Init hyperparameters for PPO agent, just like "self.gamma = opt.gamma, self.lambd = opt.lambd, ..."
+		self.__dict__.update(kwargs)
 
-
-class BetaActor(nn.Module):
-	def __init__(self, state_dim, action_dim, net_width):
-		super(BetaActor, self).__init__()
-
-		self.l1 = nn.Linear(state_dim, net_width)
-		self.l2 = nn.Linear(net_width, net_width)
-		self.alpha_head = nn.Linear(net_width, action_dim)
-		self.beta_head = nn.Linear(net_width, action_dim)
-
-	def forward(self, state):
-		a = torch.tanh(self.l1(state))
-		a = torch.tanh(self.l2(a))
-
-		alpha = F.softplus(self.alpha_head(a)) + 1.0
-		beta = F.softplus(self.beta_head(a)) + 1.0
-
-		return alpha,beta
-
-	def get_dist(self,state):
-		alpha,beta = self.forward(state)
-		dist = Beta(alpha, beta)
-		return dist
-
-	def dist_mode(self,state):
-		alpha, beta = self.forward(state)
-		mode = (alpha) / (alpha + beta)
-		return mode
-
-class GaussianActor_musigma(nn.Module):
-	def __init__(self, state_dim, action_dim, net_width):
-		super(GaussianActor_musigma, self).__init__()
-
-		self.l1 = nn.Linear(state_dim, net_width)
-		self.l2 = nn.Linear(net_width, net_width)
-		self.mu_head = nn.Linear(net_width, action_dim)
-		self.sigma_head = nn.Linear(net_width, action_dim)
-
-	def forward(self, state):
-		a = torch.tanh(self.l1(state))
-		a = torch.tanh(self.l2(a))
-		mu = torch.sigmoid(self.mu_head(a))
-		sigma = F.softplus( self.sigma_head(a) )
-		return mu,sigma
-
-	def get_dist(self, state):
-		mu,sigma = self.forward(state)
-		dist = Normal(mu,sigma)
-		return dist
-
-class GaussianActor_mu(nn.Module):
-	def __init__(self, state_dim, action_dim, net_width, log_std=0):
-		super(GaussianActor_mu, self).__init__()
-
-		self.l1 = nn.Linear(state_dim, net_width)
-		self.l2 = nn.Linear(net_width, net_width)
-		self.mu_head = nn.Linear(net_width, action_dim)
-		self.mu_head.weight.data.mul_(0.1)
-		self.mu_head.bias.data.mul_(0.0)
-
-		self.action_log_std = nn.Parameter(torch.ones(1, action_dim) * log_std)
-
-	def forward(self, state):
-		a = torch.relu(self.l1(state))
-		a = torch.relu(self.l2(a))
-		mu = torch.sigmoid(self.mu_head(a))
-		return mu
-
-	def get_dist(self,state):
-		mu = self.forward(state)
-		action_log_std = self.action_log_std.expand_as(mu)
-		action_std = torch.exp(action_log_std)
-
-		dist = Normal(mu, action_std)
-		return dist
-
-
-class Critic(nn.Module):
-	def __init__(self, state_dim,net_width):
-		super(Critic, self).__init__()
-
-		self.C1 = nn.Linear(state_dim, net_width)
-		self.C2 = nn.Linear(net_width, net_width)
-		self.C3 = nn.Linear(net_width, 1)
-
-	def forward(self, state):
-		v = torch.tanh(self.C1(state))
-		v = torch.tanh(self.C2(v))
-		v = self.C3(v)
-		return v
-
-
-
-class PPO(object):
-	def __init__(
-		self,
-		state_dim,
-		action_dim,
-		env_with_Dead,
-		gamma=0.99,
-		lambd=0.95,
-		clip_rate=0.2,
-		K_epochs=10,
-		net_width=256,
-		a_lr=3e-4,
-		c_lr=3e-4,
-		l2_reg = 1e-3,
-		dist='Beta',
-		a_optim_batch_size = 64,
-		c_optim_batch_size = 64,
-		entropy_coef = 0,
-		entropy_coef_decay = 0.9998
-	):
-		if dist == 'Beta':
-			self.actor = BetaActor(state_dim, action_dim, net_width).to(device)
-		elif dist == 'GS_ms':
-			self.actor = GaussianActor_musigma(state_dim, action_dim, net_width).to(device)
-		elif dist == 'GS_m':
-			self.actor = GaussianActor_mu(state_dim, action_dim, net_width).to(device)
+		# Choose distribution for the actor
+		if self.Distribution == 'Beta':
+			self.actor = BetaActor(self.state_dim, self.action_dim, self.net_width).to(self.dvc)
+		elif self.Distribution == 'GS_ms':
+			self.actor = GaussianActor_musigma(self.state_dim, self.action_dim, self.net_width).to(self.dvc)
+		elif self.Distribution == 'GS_m':
+			self.actor = GaussianActor_mu(self.state_dim, self.action_dim, self.net_width).to(self.dvc)
 		else: print('Dist Error')
-		self.actor_optimizer = torch.optim.Adam(self.actor.parameters(), lr=a_lr)
-		self.dist = dist
+		self.actor_optimizer = torch.optim.Adam(self.actor.parameters(), lr=self.a_lr)
 
-		self.critic = Critic(state_dim, net_width).to(device)
-		self.critic_optimizer = torch.optim.Adam(self.critic.parameters(), lr=c_lr)
+		# Build Critic
+		self.critic = Critic(self.state_dim, self.net_width).to(self.dvc)
+		self.critic_optimizer = torch.optim.Adam(self.critic.parameters(), lr=self.c_lr)
 
-		self.env_with_Dead = env_with_Dead
-		self.action_dim = action_dim
-		self.clip_rate = clip_rate
-		self.gamma = gamma
-		self.lambd = lambd
-		self.clip_rate = clip_rate
-		self.K_epochs = K_epochs
-		self.data = []
-		self.l2_reg = l2_reg
-		self.a_optim_batch_size = a_optim_batch_size
-		self.c_optim_batch_size = c_optim_batch_size
-		self.entropy_coef = entropy_coef
-		self.entropy_coef_decay = entropy_coef_decay
+		# Build Trajectory holder
+		self.s_hoder = np.zeros((self.T_horizon, self.state_dim),dtype=np.float32)
+		self.a_hoder = np.zeros((self.T_horizon, self.action_dim),dtype=np.float32)
+		self.r_hoder = np.zeros((self.T_horizon, 1),dtype=np.float32)
+		self.s_next_hoder = np.zeros((self.T_horizon, self.state_dim),dtype=np.float32)
+		self.logprob_a_hoder = np.zeros((self.T_horizon, self.action_dim),dtype=np.float32)
+		self.done_hoder = np.zeros((self.T_horizon, 1),dtype=np.bool_)
+		self.dw_hoder = np.zeros((self.T_horizon, 1),dtype=np.bool_)
 
-	def select_action(self, state):#only used when interact with the env
+	def select_action(self, state, deterministic):
 		with torch.no_grad():
-			state = torch.FloatTensor(state.reshape(1, -1)).to(device)
-			dist = self.actor.get_dist(state)
-			a = dist.sample()
-			a = torch.clamp(a, 0, 1)
-			logprob_a = dist.log_prob(a).cpu().numpy().flatten()
-			return a.cpu().numpy().flatten(), logprob_a
-
-	def evaluate(self, state):#only used when evaluate the policy.Making the performance more stable
-		with torch.no_grad():
-			state = torch.FloatTensor(state.reshape(1, -1)).to(device)
-			if self.dist == 'Beta':
-				a = self.actor.dist_mode(state)
-			if self.dist == 'GS_ms':
-				a,b = self.actor(state)
-			if self.dist == 'GS_m':
-				a = self.actor(state)
-			return a.cpu().numpy().flatten(),0.0
+			state = torch.FloatTensor(state.reshape(1, -1)).to(self.dvc)
+			if deterministic:
+				# only used when evaluate the policy.Making the performance more stable
+				a = self.actor.deterministic_act(state)
+				return a.cpu().numpy()[0], None  # action is in shape (adim, 0)
+			else:
+				# only used when interact with the env
+				dist = self.actor.get_dist(state)
+				a = dist.sample()
+				a = torch.clamp(a, 0, 1)
+				logprob_a = dist.log_prob(a).cpu().numpy().flatten()
+				return a.cpu().numpy()[0], logprob_a # both are in shape (adim, 0)
 
 
 	def train(self):
 		self.entropy_coef*=self.entropy_coef_decay
-		s, a, r, s_prime, logprob_a, done_mask, dw_mask = self.make_batch()
 
+		'''Prepare PyTorch data from Numpy data'''
+		s = torch.from_numpy(self.s_hoder).to(self.dvc)
+		a = torch.from_numpy(self.a_hoder).to(self.dvc)
+		r = torch.from_numpy(self.r_hoder).to(self.dvc)
+		s_next = torch.from_numpy(self.s_next_hoder).to(self.dvc)
+		logprob_a = torch.from_numpy(self.logprob_a_hoder).to(self.dvc)
+		done = torch.from_numpy(self.done_hoder).to(self.dvc)
+		dw = torch.from_numpy(self.dw_hoder).to(self.dvc)
 
 		''' Use TD+GAE+LongTrajectory to compute Advantage and TD target'''
 		with torch.no_grad():
 			vs = self.critic(s)
-			vs_ = self.critic(s_prime)
+			vs_ = self.critic(s_next)
 
 			'''dw for TD_target and Adv'''
-			deltas = r + self.gamma * vs_ * (1 - dw_mask) - vs
-
+			deltas = r + self.gamma * vs_ * (~dw) - vs
 			deltas = deltas.cpu().flatten().numpy()
 			adv = [0]
 
 			'''done for GAE'''
-			for dlt, mask in zip(deltas[::-1], done_mask.cpu().flatten().numpy()[::-1]):
-				advantage = dlt + self.gamma * self.lambd * adv[-1] * (1 - mask)
+			for dlt, mask in zip(deltas[::-1], done.cpu().flatten().numpy()[::-1]):
+				advantage = dlt + self.gamma * self.lambd * adv[-1] * (~mask)
 				adv.append(advantage)
 			adv.reverse()
 			adv = copy.deepcopy(adv[0:-1])
-			adv = torch.tensor(adv).unsqueeze(1).float().to(device)
+			adv = torch.tensor(adv).unsqueeze(1).float().to(self.dvc)
 			td_target = adv + vs
 			adv = (adv - adv.mean()) / ((adv.std()+1e-4))  #sometimes helps
 
@@ -205,7 +90,7 @@ class PPO(object):
 			#Shuffle the trajectory, Good for training
 			perm = np.arange(s.shape[0])
 			np.random.shuffle(perm)
-			perm = torch.LongTensor(perm).to(device)
+			perm = torch.LongTensor(perm).to(self.dvc)
 			s, a, td_target, adv, logprob_a = \
 				s[perm].clone(), a[perm].clone(), td_target[perm].clone(), adv[perm].clone(), logprob_a[perm].clone()
 
@@ -238,45 +123,15 @@ class PPO(object):
 				c_loss.backward()
 				self.critic_optimizer.step()
 
+	def put_data(self, s, a, r, s_next, logprob_a, done, dw, idx):
+		self.s_hoder[idx] = s
+		self.a_hoder[idx] = a
+		self.r_hoder[idx] = r
+		self.s_next_hoder[idx] = s_next
+		self.logprob_a_hoder[idx] = logprob_a
+		self.done_hoder[idx] = done
+		self.dw_hoder[idx] = dw
 
-	def make_batch(self):
-		s_lst, a_lst, r_lst, s_prime_lst, logprob_a_lst, done_lst, dw_lst = [], [], [], [], [], [], []
-		for transition in self.data:
-			s, a, r, s_prime, logprob_a, done, dw = transition
-
-			s_lst.append(s)
-			a_lst.append(a)
-			logprob_a_lst.append(logprob_a)
-			r_lst.append([r])
-			s_prime_lst.append(s_prime)
-			done_lst.append([done])
-			dw_lst.append([dw])
-
-		if not self.env_with_Dead:
-			'''Important!!!'''
-			# env_without_DeadAndWin: deltas = r + self.gamma * vs_ - vs
-			# env_with_DeadAndWin: deltas = r + self.gamma * vs_ * (1 - dw) - vs
-			dw_lst = (np.array(dw_lst)*False).tolist()
-
-		self.data = [] #Clean history trajectory
-
-		'''list to tensor'''
-		with torch.no_grad():
-			s, a, r, s_prime, logprob_a, done_mask, dw_mask = \
-				torch.tensor(s_lst, dtype=torch.float).to(device), \
-				torch.tensor(a_lst, dtype=torch.float).to(device), \
-				torch.tensor(r_lst, dtype=torch.float).to(device), \
-				torch.tensor(s_prime_lst, dtype=torch.float).to(device), \
-				torch.tensor(logprob_a_lst, dtype=torch.float).to(device), \
-				torch.tensor(done_lst, dtype=torch.float).to(device), \
-				torch.tensor(dw_lst, dtype=torch.float).to(device),
-
-
-		return s, a, r, s_prime, logprob_a, done_mask, dw_mask
-
-
-	def put_data(self, transition):
-		self.data.append(transition)
 
 	def save(self,episode):
 		torch.save(self.critic.state_dict(), "./model/ppo_critic{}.pth".format(episode))
