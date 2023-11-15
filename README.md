@@ -6,7 +6,7 @@ All the experiments are trained with same hyperparameters (see main.py). **Other
 
 
 ## Dependencies
-```bash
+```python
 gymnasium==0.29.1  (https://gymnasium.farama.org/)
 box2d-py==2.3.5  (https://pypi.org/project/box2d-py/)
 numpy==1.26.1  (https://numpy.org/)
@@ -49,9 +49,9 @@ The --EnvIdex can be set to be 0~5, where
 
 P.S. 
 
-if you want train on BipedalWalker-v3, BipedalWalkerHardcore-v3, or LunarLanderContinuous-v2, you need to install **box2d-py** first.
+if you want train on BipedalWalker-v3, BipedalWalkerHardcore-v3, or LunarLanderContinuous-v2, you need to install [box2d-py](https://gymnasium.farama.org/environments/box2d/) first.
 
-if you want train on Humanoid-v2 or HalfCheetah-v2, you need to install **MuJoCo** first.
+if you want train on Humanoid-v2 or HalfCheetah-v2, you need to install [MuJoCo](https://gymnasium.farama.org/environments/mujoco/) first.
 
 ### Visualize the training curve
 You can use the [tensorboard](https://pytorch.org/tutorials/recipes/recipes/tensorboard_with_pytorch.html?highlight=tensorboard) to visualize the training curve. History training curve is saved at '\runs'
