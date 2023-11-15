@@ -7,11 +7,11 @@ All the experiments are trained with same hyperparameters (see main.py). **Other
 
 ## Dependencies
 ```python
-gymnasium==0.29.1  (https://gymnasium.farama.org/)
-box2d-py==2.3.5  (https://pypi.org/project/box2d-py/)
-numpy==1.26.1  (https://numpy.org/)
-pytorch==2.1.0  (https://pytorch.org/)
-tensorboard==2.15.1  (https://pytorch.org/tutorials/recipes/recipes/tensorboard_with_pytorch.html?highlight=tensorboard)
+gymnasium==0.29.1
+box2d-py==2.3.5
+numpy==1.26.1
+pytorch==2.1.0
+tensorboard==2.15.1
 
 python==3.11.5
 ```
@@ -54,7 +54,7 @@ if you want train on BipedalWalker-v3, BipedalWalkerHardcore-v3, or LunarLanderC
 if you want train on Humanoid-v2 or HalfCheetah-v2, you need to install [MuJoCo](https://gymnasium.farama.org/environments/mujoco/) first.
 
 ### Visualize the training curve
-You can use the [tensorboard](https://pytorch.org/tutorials/recipes/recipes/tensorboard_with_pytorch.html?highlight=tensorboard) to visualize the training curve. History training curve is saved at '\runs'
+You can use the [tensorboard](https://pytorch.org/docs/stable/tensorboard.html) to visualize the training curve. History training curve is saved at '\runs'
 
 ### Hyperparameter Setting
 For more details of Hyperparameter Setting, please check 'main.py'
