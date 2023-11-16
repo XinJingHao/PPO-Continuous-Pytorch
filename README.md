@@ -1,11 +1,9 @@
 # PPO-Continuous-Pytorch
 **A clean and robust Pytorch implementation of PPO on continuous action space**:
-<img src="https://github.com/XinJingHao/PPO-Continuous-Pytorch/blob/main/render_gif/PV1.gif" width="90%" height="auto">  | <img src="https://github.com/XinJingHao/PPO-Continuous-Pytorch/blob/main/render_gif/lldcV2.gif" width="90%" height="auto">
+<img src="https://github.com/XinJingHao/PPO-Continuous-Pytorch/blob/main/render_gif/PV1.gif" width="75%" height="auto">  | <img src="https://github.com/XinJingHao/PPO-Continuous-Pytorch/blob/main/render_gif/lldcV2.gif" width="75%" height="auto">
 :-----------------------:|:-----------------------:|
-  
-![avatar](https://github.com/XinJingHao/PPO-Continuous-Pytorch/blob/main/ppo_result.jpg)  
-All the experiments are trained with same hyperparameters (see main.py). **Other RL algorithms by Pytorch can be found [here](https://github.com/XinJingHao/RL-Algorithms-by-Pytorch).**
 
+**Other RL algorithms by Pytorch can be found [here](https://github.com/XinJingHao/RL-Algorithms-by-Pytorch).**
 
 ## Dependencies
 ```python
@@ -62,4 +60,8 @@ For more details of Hyperparameter Setting, please check 'main.py'
 ### References
 [Proximal Policy Optimization Algorithms](https://arxiv.org/pdf/1707.06347.pdf)  
 [Emergence of Locomotion Behaviours in Rich Environments](https://arxiv.org/pdf/1707.02286.pdf)
+
+## Training Curves
+![avatar](https://github.com/XinJingHao/PPO-Continuous-Pytorch/blob/main/ppo_result.jpg)  
+All the experiments are trained with same hyperparameters (see main.py). 
 
