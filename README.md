@@ -21,7 +21,7 @@ python==3.11.5
 ```bash
 python main.py
 ```
-where the default enviroment is 'Pendulum-v0', and the algorithm runs on your GPU. If you do not have a GPU, you can use the following commmand to run on your CPU: 
+where the default enviroment is 'Pendulum-v1', and the algorithm runs on your GPU. If you do not have a GPU, you can use the following commmand to run on your CPU: 
 ```bash
 python main.py --dvc cpu
 ```
@@ -37,19 +37,17 @@ If you want to train on different enviroments, just run
 python main.py --EnvIdex 0
 ```
 
-The --EnvIdex can be set to be 0~5, where   
+The ```--EnvIdex``` can be set to be 0~5, where   
 ```bash
 '--EnvIdex 0' for 'BipedalWalker-v3'  
 '--EnvIdex 1' for 'BipedalWalkerHardcore-v3'  
 '--EnvIdex 2' for 'LunarLanderContinuous-v2'  
-'--EnvIdex 3' for 'Pendulum-v0'  
+'--EnvIdex 3' for 'Pendulum-v1'  
 '--EnvIdex 4' for 'Humanoid-v2'  
 '--EnvIdex 5' for 'HalfCheetah-v2' 
 ```
 
-P.S. 
-
-if you want train on BipedalWalker-v3, BipedalWalkerHardcore-v3, or LunarLanderContinuous-v2, you need to install [box2d-py](https://gymnasium.farama.org/environments/box2d/) first.
+Note: if you want train on BipedalWalker-v3, BipedalWalkerHardcore-v3, or LunarLanderContinuous-v2, you need to install [box2d-py](https://gymnasium.farama.org/environments/box2d/) first.
 
 if you want train on Humanoid-v2 or HalfCheetah-v2, you need to install [MuJoCo](https://gymnasium.farama.org/environments/mujoco/) first.
 
