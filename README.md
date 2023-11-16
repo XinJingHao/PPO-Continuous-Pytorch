@@ -1,5 +1,7 @@
 # PPO-Continuous-Pytorch
-I found the current implementation of PPO on continuous action space is whether somewhat complicated or not stable, and this is a **clean and robust Pytorch implementation of PPO on continuous action space**. Here is the result:  
+**A clean and robust Pytorch implementation of PPO on continuous action space**:
+<img src="https://github.com/XinJingHao/PPO-Continuous-Pytorch/blob/main/render_gif/PV1.gif" width="90%" height="auto">  | <img src="https://github.com/XinJingHao/PPO-Continuous-Pytorch/blob/main/render_gif/lldcV2.gif" width="90%" height="auto">
+:-----------------------:|:-----------------------:|
   
 ![avatar](https://github.com/XinJingHao/PPO-Continuous-Pytorch/blob/main/ppo_result.jpg)  
 All the experiments are trained with same hyperparameters (see main.py). **Other RL algorithms by Pytorch can be found [here](https://github.com/XinJingHao/RL-Algorithms-by-Pytorch).**
