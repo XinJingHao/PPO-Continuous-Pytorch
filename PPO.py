@@ -132,15 +132,13 @@ class PPO_agent(object):
 		self.done_hoder[idx] = done
 		self.dw_hoder[idx] = dw
 
+	def save(self,EnvName, timestep):
+		torch.save(self.actor.state_dict(), "./model/{}_actor{}.pth".format(EnvName,timestep))
+		torch.save(self.critic.state_dict(), "./model/{}_q_critic{}.pth".format(EnvName,timestep))
 
-	def save(self,episode):
-		torch.save(self.critic.state_dict(), "./model/ppo_critic{}.pth".format(episode))
-		torch.save(self.actor.state_dict(), "./model/ppo_actor{}.pth".format(episode))
-
-
-	def load(self,episode):
-		self.critic.load_state_dict(torch.load("./model/ppo_critic{}.pth".format(episode)))
-		self.actor.load_state_dict(torch.load("./model/ppo_actor{}.pth".format(episode)))
+	def load(self,EnvName, timestep):
+		self.actor.load_state_dict(torch.load("./model/{}_actor{}.pth".format(EnvName, timestep)))
+		self.critic.load_state_dict(torch.load("./model/{}_q_critic{}.pth".format(EnvName, timestep)))
 
 
 

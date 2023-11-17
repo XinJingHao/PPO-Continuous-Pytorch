@@ -1,6 +1,4 @@
-from torch.utils.tensorboard import SummaryWriter
 from datetime import datetime
-import numpy as np
 import os, shutil
 import argparse
 import torch
@@ -13,11 +11,11 @@ from PPO import PPO_agent
 '''Hyperparameter Setting'''
 parser = argparse.ArgumentParser()
 parser.add_argument('--dvc', type=str, default='cuda', help='running device: cuda or cpu')
-parser.add_argument('--EnvIdex', type=int, default=3, help='BWv3, BWHv3, Lch_Cv2, PV0, Humanv2, HCv2')
-parser.add_argument('--write', type=str2bool, default=True, help='Use SummaryWriter to record the training')
+parser.add_argument('--EnvIdex', type=int, default=0, help='PV1, Lch_Cv2, Humanv4, HCv4, BWv3, BWHv3')
+parser.add_argument('--write', type=str2bool, default=False, help='Use SummaryWriter to record the training')
 parser.add_argument('--render', type=str2bool, default=False, help='Render or Not')
 parser.add_argument('--Loadmodel', type=str2bool, default=False, help='Load pretrained model or Not')
-parser.add_argument('--ModelIdex', type=int, default=400, help='which model to load')
+parser.add_argument('--ModelIdex', type=int, default=100, help='which model to load')
 
 parser.add_argument('--seed', type=int, default=0, help='random seed')
 parser.add_argument('--T_horizon', type=int, default=2048, help='lenth of long trajectory')
@@ -44,9 +42,10 @@ print(opt)
 
 
 def main():
-    # Build Training Env and Evaluation Env
-    EnvName = ['BipedalWalker-v3','BipedalWalkerHardcore-v3','LunarLanderContinuous-v2','Pendulum-v1','Humanoid-v2','HalfCheetah-v2']
-    BriefEnvName = ['BWv3', 'BWHv3', 'Lch_Cv2', 'PV0', 'Humanv2', 'HCv2']
+    EnvName = ['Pendulum-v1','LunarLanderContinuous-v2','Humanoid-v4','HalfCheetah-v4','BipedalWalker-v3','BipedalWalkerHardcore-v3']
+    BrifEnvName = ['PV1', 'LLdV2', 'Humanv4', 'HCv4','BWv3', 'BWHv3']
+
+    # Build Env
     env = gym.make(EnvName[opt.EnvIdex], render_mode = "human" if opt.render else None)
     eval_env = gym.make(EnvName[opt.EnvIdex])
     opt.state_dim = env.observation_space.shape[0]
@@ -58,7 +57,6 @@ def main():
 
     # Seed Everything
     env_seed = opt.seed
-    np.random.seed(opt.seed)
     torch.manual_seed(opt.seed)
     torch.cuda.manual_seed(opt.seed)
     torch.backends.cudnn.deterministic = True
@@ -67,9 +65,10 @@ def main():
 
     # Use tensorboard to record training curves
     if opt.write:
+        from torch.utils.tensorboard import SummaryWriter
         timenow = str(datetime.now())[0:-10]
         timenow = ' ' + timenow[0:13] + '_' + timenow[-2::]
-        writepath = 'runs/{}'.format(BriefEnvName[opt.EnvIdex]) + timenow
+        writepath = 'runs/{}'.format(BrifEnvName[opt.EnvIdex]) + timenow
         if os.path.exists(writepath): shutil.rmtree(writepath)
         writer = SummaryWriter(log_dir=writepath)
 
@@ -80,7 +79,7 @@ def main():
 
     if not os.path.exists('model'): os.mkdir('model')
     agent = PPO_agent(**vars(opt)) # transfer opt to dictionary, and use it to init PPO_agent
-    if opt.Loadmodel: agent.load(opt.ModelIdex)
+    if opt.Loadmodel: agent.load(BrifEnvName[opt.EnvIdex], opt.ModelIdex)
 
     if opt.render:
         while True:
@@ -122,7 +121,7 @@ def main():
 
                 '''Save model'''
                 if total_steps % opt.save_interval==0:
-                    agent.save(total_steps)
+                    agent.save(BrifEnvName[opt.EnvIdex], int(total_steps/1000))
 
         env.close()
         eval_env.close()
