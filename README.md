@@ -61,13 +61,19 @@ pip install gymnasium[mujoco]
 
 ### Visualize the training curve
 You can use the [tensorboard](https://pytorch.org/docs/stable/tensorboard.html) to record anv visualize the training curve. 
+
+- Installation (please make sure PyTorch is installed already):
 ```bash
-# record:
+pip install tensorboard
+pip install packaging
+```
+- Record (the training curves will be saved at '**\runs**'):
+```bash
 python main.py --write True
 ```
-where the training curves will be saved at '**\runs**', and you can visulize it via:
+
+- Visualization:
 ```bash
-# visulize:
 tensorboard --logdir runs
 ```
 
